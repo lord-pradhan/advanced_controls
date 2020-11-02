@@ -124,7 +124,7 @@ void setup() {
   k_fb[0] = 0.0707; k_fb[1]= 1.6866; k_fb[2] = -171.1; k_fb[3] = -4.0;
 
   amplitude = 8.0;
-  freq = 1.8496;
+  freq = 18.8496;
   
   Serial.print("Setup Done!\n");
 
@@ -427,18 +427,21 @@ void mainfunc()
 
   // calc control effort
   float forcing = amplitude*sin(freq * (float)time/1000.0);
+  float forcing_random = (float) random(-8000, 8000) / 1000.0;
   float volt = -k_fb[0]*x_err - k_fb[1]*xdot_err - k_fb[2]*theta_err - k_fb[3]*thetadot_err + forcing;
   float pwm = max(min(volt / 8.0 * 255.0, 255.0), -255.0);
-//  SetLeftWheelSpeed(pwm);
-//  SetRightWheelSpeed(pwm);
+  SetLeftWheelSpeed(pwm);
+  SetRightWheelSpeed(pwm);
   
-  BTserial.print(forcing);
+  BTserial.print((float)(time - prev_time), 5);
   BTserial.print(",");
-  BTserial.print(volt);
+  BTserial.print(forcing_random, 5);
   BTserial.print(",");
-  BTserial.print(x_meas);
+  BTserial.print(volt, 5);
   BTserial.print(",");
-  BTserial.println(theta_filt);
+  BTserial.print(x_meas, 5);
+  BTserial.print(",");
+  BTserial.println(theta_filt, 5);
   
   theta_filt_prev = theta_filt;
   theta_dot_prev = theta_dot;
